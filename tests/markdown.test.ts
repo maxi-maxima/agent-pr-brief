@@ -14,6 +14,10 @@ describe("toMarkdown", () => {
         mediumRisk: 0,
         lowRisk: 0
       },
+      assessment: {
+        status: "block",
+        reason: "1 high-risk file requires focused human review before merge."
+      },
       files: [
         {
           path: "src/auth.ts",
@@ -44,6 +48,8 @@ describe("toMarkdown", () => {
     const markdown = toMarkdown(brief);
 
     expect(markdown).toContain("# Agent PR Brief: agent update");
+    expect(markdown).toContain("## Assessment");
+    expect(markdown).toContain("**BLOCK**: 1 high-risk file requires focused human review before merge.");
     expect(markdown).toContain("| Files | Added | Removed | High | Medium | Low |");
     expect(markdown).toContain("src/auth.ts");
     expect(markdown).toContain("Does the authentication behavior still fail closed?");

@@ -1,4 +1,5 @@
 export type RiskLevel = "low" | "medium" | "high";
+export type AssessmentStatus = "pass" | "review" | "block";
 
 export interface FileChange {
   path: string;
@@ -22,6 +23,10 @@ export interface ReviewBrief {
     highRisk: number;
     mediumRisk: number;
     lowRisk: number;
+  };
+  assessment: {
+    status: AssessmentStatus;
+    reason: string;
   };
   reviewOrder: FileChange[];
   questions: string[];

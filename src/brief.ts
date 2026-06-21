@@ -1,8 +1,16 @@
-import type { ReviewBrief } from "./types.js";
+import type { AssessmentStatus, ReviewBrief } from "./types.js";
 import { parseUnifiedDiff } from "./diff.js";
 
 export function createBrief(title: string, diff: string): ReviewBrief {
   const files = parseUnifiedDiff(diff);
+  const totals = {
+    files: files.length,
+    added: files.reduce((sum, file) => sum + file.added, 0),
+    removed: files.reduce((sum, file) => sum + file.removed, 0),
+    highRisk: files.filter((file) => file.risk === "high").length,
+    mediumRisk: files.filter((file) => file.risk === "medium").length,
+    lowRisk: files.filter((file) => file.risk === "low").length
+  };
   const reviewOrder = [...files].sort((a, b) => {
     const riskDelta = riskWeight(b.risk) - riskWeight(a.risk);
     if (riskDelta !== 0) {
@@ -14,17 +22,48 @@ export function createBrief(title: string, diff: string): ReviewBrief {
   return {
     title,
     files,
-    totals: {
-      files: files.length,
-      added: files.reduce((sum, file) => sum + file.added, 0),
-      removed: files.reduce((sum, file) => sum + file.removed, 0),
-      highRisk: files.filter((file) => file.risk === "high").length,
-      mediumRisk: files.filter((file) => file.risk === "medium").length,
-      lowRisk: files.filter((file) => file.risk === "low").length
-    },
+    totals,
+    assessment: assessTotals(totals),
     reviewOrder,
     questions: buildQuestions(files)
   };
+}
+
+function assessTotals(totals: ReviewBrief["totals"]): { status: AssessmentStatus; reason: string } {
+  if (totals.highRisk > 0) {
+    return {
+      status: "block",
+      reason: `${totals.highRisk} high-risk ${pluralize("file", totals.highRisk)} ${presentTense("require", totals.highRisk)} focused human review before merge.`
+    };
+  }
+
+  if (totals.mediumRisk > 0) {
+    return {
+      status: "review",
+      reason: `${totals.mediumRisk} medium-risk ${pluralize("file", totals.mediumRisk)} should be reviewed before merge.`
+    };
+  }
+
+  const changedLines = totals.added + totals.removed;
+  if (changedLines >= 500) {
+    return {
+      status: "review",
+      reason: `${changedLines} changed ${pluralize("line", changedLines)} should be reviewed for generated-code drift.`
+    };
+  }
+
+  return {
+    status: "pass",
+    reason: "No high-risk or medium-risk diff signals were detected."
+  };
+}
+
+function pluralize(word: string, count: number): string {
+  return count === 1 ? word : `${word}s`;
+}
+
+function presentTense(verb: string, count: number): string {
+  return count === 1 ? `${verb}s` : verb;
 }
 
 function riskWeight(risk: string): number {

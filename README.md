@@ -15,6 +15,7 @@ AI coding agents can produce a large, plausible pull request in minutes. That ch
 - high-risk files first
 - mechanical reasons for risk
 - reviewer questions tied to the diff
+- a deterministic `pass` / `review` / `block` assessment for CI gates
 - JSON and Markdown output for CI or PR comments
 
 No API keys. No LLM call. No telemetry.
@@ -67,15 +68,29 @@ Added: 5
 Removed: 1
 High risk: 2
 Medium risk: 0
+Assessment: BLOCK - 2 high-risk files require focused human review before merge.
 Reports: reports/demo
 ```
 
 Markdown includes:
 
+- assessment status and reason
 - totals
 - sorted review order
 - file-level risk reasons
 - reviewer questions
+
+## Assessment Gate
+
+Every JSON and Markdown brief includes an assessment that automation can consume:
+
+| Status | Meaning |
+| --- | --- |
+| `block` | At least one high-risk file was detected. Review before merge. |
+| `review` | Medium-risk files or a very large routine diff were detected. Review before merge. |
+| `pass` | No high-risk or medium-risk diff signals were detected. |
+
+The assessment is deterministic and conservative. It does not approve a PR; it tells CI, bots, and reviewers how much attention the diff should receive.
 
 ## Risk Signals
 

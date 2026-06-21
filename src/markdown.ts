@@ -4,6 +4,10 @@ export function toMarkdown(brief: ReviewBrief): string {
   const lines: string[] = [
     `# Agent PR Brief: ${brief.title}`,
     "",
+    "## Assessment",
+    "",
+    `**${brief.assessment.status.toUpperCase()}**: ${brief.assessment.reason}`,
+    "",
     "| Files | Added | Removed | High | Medium | Low |",
     "| ---: | ---: | ---: | ---: | ---: | ---: |",
     `| ${brief.totals.files} | ${brief.totals.added} | ${brief.totals.removed} | ${brief.totals.highRisk} | ${brief.totals.mediumRisk} | ${brief.totals.lowRisk} |`,

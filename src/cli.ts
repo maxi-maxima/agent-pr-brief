@@ -9,7 +9,7 @@ const program = new Command();
 program
   .name("agent-pr-brief")
   .description("Generate deterministic review briefs for AI-agent pull requests.")
-  .version("0.1.0");
+  .version("0.2.0");
 
 program
   .command("from-diff")
@@ -50,4 +50,5 @@ function printSummary(brief: ReviewBrief): void {
   console.log(`Removed: ${brief.totals.removed}`);
   console.log(`High risk: ${brief.totals.highRisk}`);
   console.log(`Medium risk: ${brief.totals.mediumRisk}`);
+  console.log(`Assessment: ${brief.assessment.status.toUpperCase()} - ${brief.assessment.reason}`);
 }

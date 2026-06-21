@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0
+
+- Add deterministic `assessment` output for CI and PR comment workflows.
+- Classify briefs as `pass`, `review`, or `block` from the detected diff risk.
+- Render the assessment status and reason in Markdown and CLI summaries.
+
 ## 0.1.0
 
 - Initial public release.
