@@ -54,4 +54,50 @@ describe("toMarkdown", () => {
     expect(markdown).toContain("src/auth.ts");
     expect(markdown).toContain("Does the authentication behavior still fail closed?");
   });
+  it("escapes table delimiters in review order cells", () => {
+    const brief: ReviewBrief = {
+      title: "pipe path",
+      totals: {
+        files: 1,
+        added: 1,
+        removed: 0,
+        highRisk: 0,
+        mediumRisk: 0,
+        lowRisk: 1
+      },
+      assessment: {
+        status: "pass",
+        reason: "No high-risk or medium-risk diff signals were detected."
+      },
+      files: [
+        {
+          path: "docs/agent|notes.md",
+          added: 1,
+          removed: 0,
+          hunks: 1,
+          isDeleted: false,
+          isRenamed: false,
+          risk: "low",
+          reasons: []
+        }
+      ],
+      reviewOrder: [
+        {
+          path: "docs/agent|notes.md",
+          added: 1,
+          removed: 0,
+          hunks: 1,
+          isDeleted: false,
+          isRenamed: false,
+          risk: "low",
+          reasons: ["contains | in path"]
+        }
+      ],
+      questions: []
+    };
+
+    const markdown = toMarkdown(brief);
+
+    expect(markdown).toContain("| low | `docs/agent\\|notes.md` | +1/-0 | contains \\| in path |");
+  });
 });

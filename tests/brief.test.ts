@@ -102,4 +102,34 @@ index 1111111..2222222 100644
       reason: "No high-risk or medium-risk diff signals were detected."
     });
   });
+
+  it("adds targeted questions for environment and container runtime changes", () => {
+    const brief = createBrief(
+      "runtime update",
+      `diff --git a/.env.example b/.env.example
+index 1111111..2222222 100644
+--- a/.env.example
++++ b/.env.example
+@@ -1,2 +1,3 @@
+ API_URL=https://example.com
++FEATURE_FLAG=true
+diff --git a/Dockerfile b/Dockerfile
+index 3333333..4444444 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -1,2 +1,3 @@
+ FROM node:20
++USER node
+`
+    );
+
+    expect(brief.assessment).toEqual({
+      status: "review",
+      reason: "2 medium-risk files should be reviewed before merge."
+    });
+    expect(brief.questions).toContain("Do environment-file changes avoid committing secrets and preserve safe defaults?");
+    expect(brief.questions).toContain(
+      "Do container runtime changes preserve least privilege, health checks, and safe network exposure?"
+    );
+  });
 });

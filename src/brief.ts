@@ -100,6 +100,14 @@ function buildQuestions(files: ReturnType<typeof parseUnifiedDiff>): string[] {
     questions.push("Are dependency and package-script changes necessary for this PR?");
   }
 
+  if (reasons.has("touches environment file")) {
+    questions.push("Do environment-file changes avoid committing secrets and preserve safe defaults?");
+  }
+
+  if (reasons.has("touches container runtime config")) {
+    questions.push("Do container runtime changes preserve least privilege, health checks, and safe network exposure?");
+  }
+
   if (reasons.has("touches database or schema path")) {
     questions.push("Is there a rollback path for database or schema changes?");
   }

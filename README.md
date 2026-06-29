@@ -101,6 +101,8 @@ The assessment is deterministic and conservative. It does not approve a PR; it t
 | Package lifecycle scripts such as `postinstall` | high |
 | Command execution surfaces | high |
 | Risky bypass wording | high |
+| Environment files such as `.env.example` | medium |
+| Container runtime config such as `Dockerfile` and `docker-compose.yml` | medium |
 | Dependency/package metadata | medium |
 | Database/schema paths | medium |
 | CI/deploy/workflow paths | medium |

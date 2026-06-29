@@ -20,7 +20,7 @@ export function toMarkdown(brief: ReviewBrief): string {
 
   for (const file of brief.reviewOrder) {
     lines.push(
-      `| ${file.risk} | \`${file.path}\` | +${file.added}/-${file.removed} | ${file.reasons.length ? file.reasons.join("<br>") : "routine diff"} |`
+      `| ${file.risk} | \`${escapeMarkdownTableCell(file.path)}\` | +${file.added}/-${file.removed} | ${formatReasons(file.reasons)} |`
     );
   }
 
@@ -53,4 +53,16 @@ export function toMarkdown(brief: ReviewBrief): string {
   }
 
   return lines.join("\n");
+}
+
+function formatReasons(reasons: string[]): string {
+  if (reasons.length === 0) {
+    return "routine diff";
+  }
+
+  return reasons.map(escapeMarkdownTableCell).join("<br>");
+}
+
+function escapeMarkdownTableCell(value: string): string {
+  return value.replace(/\\/g, "\\\\").replace(/\|/g, "\\|").replace(new RegExp(String.fromCharCode(13), "g"), " ").replace(new RegExp(String.fromCharCode(10), "g"), " ");
 }

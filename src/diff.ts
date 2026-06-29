@@ -93,6 +93,14 @@ function finalizeRisk(file: MutableFileChange): FileChange {
     reasons.add("touches automation or deployment path");
   }
 
+  if (/\.env(?:\.|$)|(^|\/)(\.env|env\.local|env\.production|env\.development)$/.test(path)) {
+    reasons.add("touches environment file");
+  }
+
+  if (/(^|\/)(dockerfile|docker-compose\.(?:ya?ml)|compose\.(?:ya?ml))$/.test(path)) {
+    reasons.add("touches container runtime config");
+  }
+
   if (/process\.env|import\.meta\.env|\benv\b/.test(addedText)) {
     reasons.add("changes environment-variable behavior");
   }
@@ -128,6 +136,8 @@ function finalizeRisk(file: MutableFileChange): FileChange {
       "changes dependency or package metadata",
       "touches database or schema path",
       "touches automation or deployment path",
+      "touches environment file",
+      "touches container runtime config",
       "deletes a file",
       "large file-level diff"
     ].includes(reason)

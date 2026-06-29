@@ -86,6 +86,8 @@ Markdown 包含：
 | `postinstall` 等 package 生命周期脚本 | high |
 | 命令执行入口 | high |
 | 绕过/不安全相关措辞 | high |
+| `.env.example` 等环境文件 | medium |
+| `Dockerfile`、`docker-compose.yml` 等容器运行时配置 | medium |
 | dependency/package 元数据 | medium |
 | database/schema 路径 | medium |
 | CI/deploy/workflow 路径 | medium |
