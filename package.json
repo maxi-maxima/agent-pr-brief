@@ -27,6 +27,7 @@
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.test.json",
     "check": "npm run lint && npm run test && npm run typecheck && npm run build",
+    "package:check": "npm run check && npm pack --dry-run --ignore-scripts",
     "prepack": "npm run check"
   },
   "keywords": [

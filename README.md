@@ -128,9 +128,7 @@ This tool does not approve code, replace tests, or tell you whether a PR is corr
 
 ```bash
 npm install
-npm run check
-node dist/cli.js demo --out reports/demo
-npm pack --dry-run --ignore-scripts
+npm run package:check
 ```
 
 ## License
