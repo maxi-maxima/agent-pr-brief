@@ -4,6 +4,7 @@
 
 - Add `--fail-on never|review|block` for CI assessment gates.
 - Keep report generation intact while returning exit code `1` when the selected risk threshold is reached.
+- Refresh GitHub Actions pins to current runtime-compatible releases.
 
 ## 0.2.0
 

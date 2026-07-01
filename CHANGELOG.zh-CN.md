@@ -4,6 +4,7 @@
 
 - 新增 `--fail-on never|review|block`，方便在 CI 中使用 assessment gate。
 - 保持报告生成不变；当 assessment 达到所选风险阈值时，命令会返回退出码 `1`。
+- 刷新 GitHub Actions pin，避免旧运行时弃用提示。
 
 ## 0.2.0
 
