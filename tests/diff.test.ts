@@ -8,7 +8,7 @@ index 1111111..2222222 100644
 @@ -1,4 +1,6 @@
  export function login(token: string) {
 -  return verify(token);
-+  if (process.env.SKIP_AUTH === "1") return true;
++  if (process.env.SKIP_AUTH=*** "1") return true;
 +  return verify(token) && token.length > 10;
  }
 diff --git a/README.md b/README.md
@@ -19,6 +19,18 @@ index 3333333..4444444 100644
  # App
 +More docs.
 `;
+
+function diffFor(path: string, addedLines: string[]): string {
+  return [
+    `diff --git a/${path} b/${path}`,
+    "index 0000000..1111111 100644",
+    `--- a/${path}`,
+    `+++ b/${path}`,
+    "@@ -1,1 +1,3 @@",
+    " context",
+    ...addedLines.map((line) => `+${line}`)
+  ].join("\n");
+}
 
 describe("parseUnifiedDiff", () => {
   it("extracts file stats and risk reasons from a unified diff", () => {
@@ -67,5 +79,34 @@ index 3333333..4444444 100644
       risk: "medium"
     });
     expect(files[1].reasons).toContain("touches container runtime config");
+  });
+
+  it("flags package lifecycle scripts even when JSON spacing differs", () => {
+    const files = parseUnifiedDiff(
+      diffFor("package.json", [
+        "  {",
+        "    \"scripts\": {",
+        "      \"postinstall\" : \"node ./scripts/setup.js\"",
+        "    }",
+        "  }"
+      ])
+    );
+
+    expect(files[0]?.risk).toBe("high");
+    expect(files[0]?.reasons).toContain("adds package lifecycle script");
+  });
+
+  it("flags command execution aliases and node child-process imports", () => {
+    const files = parseUnifiedDiff(
+      diffFor("src/runner.ts", [
+        "import { execFile as runCommand } from 'node:child_process';",
+        "export function runTool(input: string) {",
+        "  return runCommand(input, []);",
+        "}"
+      ])
+    );
+
+    expect(files[0]?.risk).toBe("high");
+    expect(files[0]?.reasons).toContain("adds command execution surface");
   });
 });

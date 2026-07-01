@@ -105,11 +105,11 @@ function finalizeRisk(file: MutableFileChange): FileChange {
     reasons.add("changes environment-variable behavior");
   }
 
-  if (/"(preinstall|install|postinstall|prepare|prepublish|prepack)"\s*:/.test(addedText)) {
+  if (/"(preinstall|install|postinstall|prepare|prepublish|prepack)"\s*:\s*/.test(addedText)) {
     reasons.add("adds package lifecycle script");
   }
 
-  if (/child_process|exec\(|spawn\(|eval\(|new function|curl |wget |powershell|bash -c/.test(addedText)) {
+  if (/child_process|node:child_process|exec(?:file)?\s*(?:as\s+\w+)?\s*\(|spawn(?:sync)?\s*(?:as\s+\w+)?\s*\(|eval\(|new function|curl |wget |powershell|bash -c/.test(addedText)) {
     reasons.add("adds command execution surface");
   }
 
