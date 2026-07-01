@@ -15,6 +15,7 @@ AI 编码 agent 可以在几分钟内生成一个很大、看起来也合理的 
 - 高风险文件优先
 - 给出机械、可解释的风险原因
 - 生成和 diff 相关的 reviewer 问题
+- 生成确定性的 `pass` / `review` / `block` assessment，方便 CI gate 使用
 - 输出 JSON 和 Markdown，方便 CI 或 PR 评论使用
 
 不需要 API key。不调用 LLM。不做遥测。
@@ -58,6 +59,8 @@ npx github:maxi-maxima/agent-pr-brief from-diff /tmp/pr.diff --title "agent upda
 npx github:maxi-maxima/agent-pr-brief from-git origin/main --title "agent update" --out reports/pr-brief
 ```
 
+如果要接入 CI，可以加 `--fail-on block` 只在 `block` assessment 时失败，或者加 `--fail-on review` 在 `review` 和 `block` 时都失败。
+
 ## 输出示例
 
 ```text
@@ -72,10 +75,23 @@ Reports: reports/demo
 
 Markdown 包含：
 
+- assessment 状态和原因
 - 总体统计
 - 排好序的审查顺序
 - 文件级风险原因
 - reviewer 应该问的问题
+
+## Assessment Gate
+
+每份 JSON 和 Markdown 简报都会包含一个确定性的 assessment：
+
+| 状态 | 含义 |
+| --- | --- |
+| `block` | 发现至少一个高风险文件，合并前必须重点 review。 |
+| `review` | 发现中风险文件或很大的常规 diff，合并前应该 review。 |
+| `pass` | 没有发现高风险或中风险 diff 信号。 |
+
+在 CI 中传入 `--fail-on block` 或 `--fail-on review` 后，命令仍会写出 JSON/Markdown 报告；当 assessment 达到所选阈值时，退出码会变成 `1`。
 
 ## 风险信号
 
@@ -96,9 +112,9 @@ Markdown 包含：
 ## 命令
 
 ```bash
-agent-pr-brief demo [--out reports/demo]
-agent-pr-brief from-diff <file> [--title "agent PR"] [--out reports/agent-pr-brief]
-agent-pr-brief from-git [base] [--title "agent PR"] [--out reports/agent-pr-brief]
+agent-pr-brief demo [--out reports/demo] [--fail-on never|review|block]
+agent-pr-brief from-diff <file> [--title "agent PR"] [--out reports/agent-pr-brief] [--fail-on never|review|block]
+agent-pr-brief from-git [base] [--title "agent PR"] [--out reports/agent-pr-brief] [--fail-on never|review|block]
 ```
 
 ## 它不是什么

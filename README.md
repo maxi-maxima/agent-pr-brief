@@ -59,6 +59,8 @@ npx github:maxi-maxima/agent-pr-brief from-diff /tmp/pr.diff --title "agent upda
 npx github:maxi-maxima/agent-pr-brief from-git origin/main --title "agent update" --out reports/pr-brief
 ```
 
+Add `--fail-on block` to make CI fail only for `block` assessments, or `--fail-on review` to fail for both `review` and `block`.
+
 ## Example Output
 
 ```text
@@ -92,6 +94,8 @@ Every JSON and Markdown brief includes an assessment that automation can consume
 
 The assessment is deterministic and conservative. It does not approve a PR; it tells CI, bots, and reviewers how much attention the diff should receive.
 
+For CI gates, pass `--fail-on block` or `--fail-on review`. The command still writes the JSON and Markdown brief, then exits with code `1` when the assessment reaches the selected threshold.
+
 ## Risk Signals
 
 | Signal | Risk |
@@ -111,9 +115,9 @@ The assessment is deterministic and conservative. It does not approve a PR; it t
 ## Commands
 
 ```bash
-agent-pr-brief demo [--out reports/demo]
-agent-pr-brief from-diff <file> [--title "agent PR"] [--out reports/agent-pr-brief]
-agent-pr-brief from-git [base] [--title "agent PR"] [--out reports/agent-pr-brief]
+agent-pr-brief demo [--out reports/demo] [--fail-on never|review|block]
+agent-pr-brief from-diff <file> [--title "agent PR"] [--out reports/agent-pr-brief] [--fail-on never|review|block]
+agent-pr-brief from-git [base] [--title "agent PR"] [--out reports/agent-pr-brief] [--fail-on never|review|block]
 ```
 
 ## What It Is Not

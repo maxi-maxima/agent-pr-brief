@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0
+
+- Add `--fail-on never|review|block` for CI assessment gates.
+- Keep report generation intact while returning exit code `1` when the selected risk threshold is reached.
+
 ## 0.2.0
 
 - Add deterministic `assessment` output for CI and PR comment workflows.
