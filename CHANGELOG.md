@@ -6,6 +6,7 @@
 - Keep report generation intact while returning exit code `1` when the selected risk threshold is reached.
 - Refresh GitHub Actions pins to current runtime-compatible releases.
 - Add `package:check` so local release checks match CI packaging validation.
+- Count added and removed hunk lines whose content begins with `++` or `--` instead of mistaking them for file headers.
 
 ## 0.2.0
 

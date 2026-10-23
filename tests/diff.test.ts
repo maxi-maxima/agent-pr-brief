@@ -109,4 +109,22 @@ index 3333333..4444444 100644
     expect(files[0]?.risk).toBe("high");
     expect(files[0]?.reasons).toContain("adds command execution surface");
   });
+
+  it("counts hunk lines whose content begins with diff header markers", () => {
+    const files = parseUnifiedDiff(`diff --git a/src/counter.ts b/src/counter.ts
+index 1111111..2222222 100644
+--- a/src/counter.ts
++++ b/src/counter.ts
+@@ -1,1 +1,1 @@
+---counter;
++++counter;
+`);
+
+    expect(files[0]).toMatchObject({
+      path: "src/counter.ts",
+      added: 1,
+      removed: 1,
+      hunks: 1
+    });
+  });
 });

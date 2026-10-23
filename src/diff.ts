@@ -3,6 +3,7 @@ import type { FileChange } from "./types.js";
 export function parseUnifiedDiff(diff: string): FileChange[] {
   const files: MutableFileChange[] = [];
   let current: MutableFileChange | undefined;
+  let inHunk = false;
 
   for (const line of diff.split(/\r?\n/)) {
     const fileMatch = /^diff --git a\/(.+?) b\/(.+)$/.exec(line);
@@ -20,6 +21,7 @@ export function parseUnifiedDiff(diff: string): FileChange[] {
         addedLines: []
       };
       files.push(current);
+      inHunk = false;
       continue;
     }
 
@@ -47,10 +49,11 @@ export function parseUnifiedDiff(diff: string): FileChange[] {
 
     if (line.startsWith("@@")) {
       current.hunks += 1;
+      inHunk = true;
       continue;
     }
 
-    if (line.startsWith("+++") || line.startsWith("---")) {
+    if (!inHunk && (line.startsWith("+++") || line.startsWith("---"))) {
       continue;
     }
 
